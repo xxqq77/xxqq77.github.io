@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>母亲节快乐 | 永远爱你</title>
+    <style>
+        :root {
+            --primary-pink: #fce4ec;
+            --soft-pink: #f8bbd0;
+            --accent-pink: #f06292;
+            --champagne: #fff9f0;
+            --text-color: #8d6e63;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--champagne);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* 背景装饰 */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(180deg, #fff9f0 0%, #fce4ec 100%);
+        }
+
+        /* 音乐控制 */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 20px;
+        }
+
+        .rotating {
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 贺卡容器 */
+        .card-container {
+            position: relative;
+            width: 320px;
+            height: 450px;
+            perspective: 1000px;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-container.open {
+            width: 90%;
+            max-width: 600px;
+            height: 80vh;
+        }
+
+        /* 信封样式 */
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-pink);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(240, 98, 146, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.8s ease;
+            z-index: 2;
+            border: 8px solid white;
+        }
+
+        .envelope::after {
+            content: "轻轻点击 开启心意";
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--accent-pink);
+            letter-spacing: 2px;
+            animation: breathe 2s infinite ease-in-out;
+        }
+
+        /* 核心康乃馨图标 */
+        .flower-icon {
+            font-size: 80px;
+            filter: drop-shadow(0 5px 10px rgba(240, 98, 146, 0.3));
+            transition: transform 0.5s ease;
+        }
+
+        .envelope:hover .flower-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* 信纸内容区 */
+        .content-paper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 15px;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .open .content-paper {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            z-index: 3;
+        }
+
+        .open .envelope {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.2) translateY(-50px);
+        }
+
+        /* 文字样式 */
+        .title {
+            font-size: 24px;
+            color: var(--accent-pink);
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-align: center;
+            animation: fadeIn 2s ease;
+        }
+
+        .photo-area {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: #eee;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            background-image: url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=600'); /* 示例图片，可替换 */
+            background-size: cover;
+            background-position: center;
+            border: 5px solid var(--champagne);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .message {
+            line-height: 1.8;
+            font-size: 16px;
+            text-align: justify;
+            color: #6d4c41;
+            white-space: pre-wrap;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: right;
+            width: 100%;
+            font-style: italic;
+            color: var(--accent-pink);
+        }
+
+        /* 动画定义 */
+        @keyframes breathe {
+            0%, 100% { opacity: 0.6; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 自适应调整 */
+        @media (max-width: 480px) {
+            .content-paper { padding: 25px; }
+            .title { font-size: 20px; }
+            .message { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="music-btn" id="musicBtn">🎵</div>
+    
+    <!-- 音乐文件（采用轻柔钢琴曲地址，若失效可更换） -->
+    <audio id="bgm" loop>
+        <source src="https://api.uomg.com/api/rand.music?sort=%E7%83%AD%E6%AD%8C%E6%A6%9C" type="audio/mpeg">
+    </audio>
+
+    <div class="card-container" id="card">
+        <!-- 初始信封状态 -->
+        <div class="envelope" onclick="openCard()">
+            <div class="flower-icon">🌸</div>
+        </div>
+
+        <!-- 展开后的信纸 -->
+        <div class="content-paper">
+            <h1 class="title">致我最爱的妈妈</h1>
+            
+            <div class="photo-area"></div>
+            
+            <div class="message">
+                亲爱的妈妈：
+
+                时光温柔，岁月中您是最美的注脚。
+                感谢您给予我生命，更感谢您用爱
+                包容我的每一次任性。
+
+                在这个属于您的节日里，
+                不求您永远年轻，只愿您岁岁平安，
+                眼里有光，心中有爱，
+                我会一直陪伴在您身边。
+
+                母亲节快乐！
+            </div>
+
+            <div class="footer">
+                —— 永远爱您的孩子
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 背景粒子动画
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.size = Math.random() * 15 + 5;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
+                this.type = Math.random() > 0.5 ? '🌸' : '❤️';
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.angle += this.spin;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+                ctx.font = `${this.size}px serif`;
+                ctx.globalAlpha = 0.6;
+                ctx.fillText(this.type, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 30; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        initParticles();
+        animate();
+
+        // 交互逻辑
+        const card = document.getElementById('card');
+        const bgm = document.getElementById('bgm');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        function openCard() {
+            card.classList.add('open');
+            // 自动播放音乐（受限于浏览器策略，需用户交互）
+            if (!isPlaying) {
+                toggleMusic();
+            }
+        }
+
+        function toggleMusic() {
+            if (bgm.paused) {
+                bgm.play().catch(e => console.log("等待交互播放"));
+                musicBtn.classList.add('rotating');
+                isPlaying = true;
+            } else {
+                bgm.pause();
+                musicBtn.classList.remove('rotating');
+                isPlaying = false;
+            }
+        }
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMusic();
+        });
+    </script>
+</body>
+</html>
